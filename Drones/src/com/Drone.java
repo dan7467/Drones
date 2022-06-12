@@ -17,6 +17,10 @@ public class Drone {
         dir = 4;
     }
 
+    public boolean outOfBounds() {
+        return xCoor < 0 || yCoor < 0 || xCoor > 99 || yCoor > 99;
+    }
+
     public void setGoTo(int xDest, int yDest){
         if (xCoor < xDest)
             dir = 3;

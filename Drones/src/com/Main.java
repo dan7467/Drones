@@ -12,6 +12,8 @@ public class Main {
     ArrayList<Drone> drones;
     final String[] ANSI = {"\u001B[0m","\u001B[31m","\u001B[32m","\u001B[33m","\u001B[34m","\u001B[35m","\u001B[36m"};
 
+    public int getDroneCount() {return droneNum;}
+
     public void initMap() {
         drones = new ArrayList<Drone>();
         drones.add(new Drone(0,0,"\u001B[36m"));
@@ -42,12 +44,19 @@ public class Main {
 
     public void setLocation(int xCoor, int yCoor, int droneId) {
         Drone d = drones.get(droneId);
-        map[d.xCoor][d.yCoor] = 0;
-        d.setLocation(xCoor,yCoor);
-        map[xCoor][yCoor] = droneId;
+        if (xCoor < 0 || yCoor < 0 || xCoor > 99 || yCoor > 99) {
+            d.dir = 4;
+            return;
+        }
+        else {
+            map[d.xCoor][d.yCoor] = 0;
+            d.setLocation(xCoor,yCoor);
+            map[xCoor][yCoor] = droneId;
+        }
     }
 
     public void refreshMap() {
+        printMap();
         for (Drone d: drones) {
             if (d.droneId == 0)
                 continue;
@@ -56,25 +65,25 @@ public class Main {
                 d.setGoTo(d.currAction.destX,d.currAction.destY);
             }
             if (dir == 0) { // Advance drone - Up
-                if (d.yCoor-d.maxSpeed == -1)
+                if (d.yCoor < 0)
                     System.out.println("drone "+d.droneId+" has exited the boundaries.");
                 else
                     setLocation(d.xCoor,d.yCoor-d.maxSpeed, d.droneId);
             }
             else if (dir == 1) { // Advance drone - Down
-                if (d.yCoor+d.maxSpeed == 100)
+                if (d.yCoor > 99)
                     System.out.println("drone "+d.droneId+" has exited the boundaries.");
                 else
                     setLocation(d.xCoor,d.yCoor+d.maxSpeed, d.droneId);
             }
             else if (dir == 2) { // Advance drone - Left
-                if (d.xCoor-d.maxSpeed == -1)
+                if (d.xCoor < 0)
                     System.out.println("drone "+d.droneId+" has exited the boundaries.");
                 else
                     setLocation(d.xCoor-d.maxSpeed,d.yCoor, d.droneId);
             }
             else if (dir == 3) { // Advance drone - Right
-                if (d.xCoor+d.maxSpeed == 100)
+                if (d.xCoor > 99)
                     System.out.println("drone "+d.droneId+" has exited the boundaries.");
                 else
                     setLocation(d.xCoor+d.maxSpeed,d.yCoor, d.droneId);
@@ -86,18 +95,11 @@ public class Main {
         }
     }
 
-    public int getDroneCount() {return droneNum;}
-
-    public void setGoTo(int droneId, int xDest, int yDest) {
-        Drone d = drones.get(droneId);
-    }
-
     public static void main(String[] args) {
         Main m = new Main();
         Runnable refreshMapRunnable = new Runnable() {
             public void run() {
                 m.refreshMap();
-                m.printMap();
             }
         };
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
@@ -111,6 +113,13 @@ public class Main {
         m.setLocation(7,95,1);
         m.setLocation(3,99,2);
         m.setLocation(5,97,3);
+//        m.setLocation(7,97,4);
+//        m.setLocation(9,97,5);
+//        m.setLocation(11,97,6);
+//        m.setLocation(13,97,7);
+//        m.setLocation(15,97,8);
+//        m.setLocation(17,97,9);
+
         m.drones.get(3).setAction(new GoTo(0,99));
     }
 }
