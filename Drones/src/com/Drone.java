@@ -11,9 +11,8 @@ public class Drone {
     public Drone(int droneId, int maxSpeed, String color){
         this.droneId = droneId;
         this.maxSpeed = maxSpeed;
-        this.currAction = new TakeOff();
+        this.currAction = new noAction();
         this.color = color;
-        this.currAction = new TakeOff();
         dir = 4;
     }
 

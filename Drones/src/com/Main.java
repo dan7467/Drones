@@ -7,10 +7,10 @@ import java.util.concurrent.TimeUnit;
 
 public class Main {
 
-    int mapSize = 100, droneNum = 0;
-    public int[][] map = new int[mapSize][mapSize];
+    int mapSize = 100, droneNum = 0; /* map size (can be modified) and drone counter */
+    public int[][] map = new int[mapSize][mapSize]; /* representation of the current map */
     ArrayList<Drone> drones;
-    final String[] ANSI = {"\u001B[0m","\u001B[31m","\u001B[32m","\u001B[33m","\u001B[34m","\u001B[35m","\u001B[36m"};
+    final String[] ANSI = {"\u001B[0m","\u001B[31m","\u001B[32m","\u001B[33m","\u001B[34m","\u001B[35m","\u001B[36m"};/* text colors */
 
     public int getDroneCount() {return droneNum;}
 
@@ -56,9 +56,13 @@ public class Main {
         droneNum++;
     }
 
+    public boolean outOfBounds(int xCoor, int yCoor){
+        return xCoor < 0 || yCoor < 0 || xCoor > 99 || yCoor > 99;
+    }
+
     public void setLocation(int xCoor, int yCoor, int droneId) {
         Drone d = drones.get(droneId);
-        if (xCoor < 0 || yCoor < 0 || xCoor > 99 || yCoor > 99) {
+        if (outOfBounds(xCoor,yCoor)) {
             d.dir = 4;
             return;
         }
@@ -98,6 +102,7 @@ public class Main {
     }
 
     public static void main(String[] args) {
+        // 1. Initiate Thread Scheduler, map, drones
         Main m = new Main();
         Runnable refreshMapRunnable = new Runnable() {
             public void run() {
@@ -108,20 +113,17 @@ public class Main {
         executor.scheduleAtFixedRate(refreshMapRunnable, 0, 1, TimeUnit.SECONDS);
         m.initMap();
 
+        // 2. Add drones to map
         m.addDrone(new Drone(m.getDroneCount(), 1,"\u001B[36m")); // first-drone is for testing, does not appear
         m.addDrone(new Hunter(m.getDroneCount(), 1));
         m.addDrone(new Wolverine(m.getDroneCount(), 1));
 
+        // 3. Set drones' location
         m.setLocation(7,95,1);
         m.setLocation(3,99,2);
         m.setLocation(5,97,3);
-//        m.setLocation(7,97,4);
-//        m.setLocation(9,97,5);
-//        m.setLocation(11,97,6);
-//        m.setLocation(13,97,7);
-//        m.setLocation(15,97,8);
-//        m.setLocation(17,97,9);
 
+        // 4. Set a GoTo action for 2 different drones
         m.drones.get(3).setAction(new GoTo(18,99));
         m.drones.get(1).setAction(new GoTo(0,99));
     }
