@@ -29,7 +29,8 @@ public class Main {
         for (int i=0; i<map.length; i++){
             for (int j=0; j<map[i].length; j++){
                 if (map[j][i] != 0)
-                    System.out.print(drones.get(map[j][i]).color+map[j][i]+" "+ANSI[0]);
+                    System.out.print(/*drones.get(map[j][i]).color+ COLORS-delete this comment for colors in IntelliJ terminal*/
+                            map[j][i]+" "/*+ANSI[0] (colors again)*/);
                 else
                     System.out.print("0 ");
             }
@@ -46,7 +47,7 @@ public class Main {
             sub = s.substring(10,s.length());
             act = d.currAction.toString();
             subact = act.substring(4,act.indexOf('@'));
-            System.out.print(d.droneId+". "+sub+": ("+d.xCoor+","+d.yCoor+") Action: "+subact+"\t\t\t");
+            System.out.print(d.droneId+". "+sub+": ("+d.xCoor+","+d.yCoor+") Action: "+subact+", maxSpeed="+d.maxSpeed+"\t\t\t");
         }
         System.out.println("");
     }
@@ -73,6 +74,25 @@ public class Main {
         }
     }
 
+    public void updateDir(Drone d, int dir) {
+        switch (dir) {
+            case 0:
+                setLocation(d.xCoor,d.yCoor-d.maxSpeed, d.droneId);
+                break;
+            case 1:
+                setLocation(d.xCoor,d.yCoor+d.maxSpeed, d.droneId);
+                break;
+            case 2:
+                setLocation(d.xCoor-d.maxSpeed,d.yCoor, d.droneId);
+                break;
+            case 3:
+                setLocation(d.xCoor+d.maxSpeed,d.yCoor, d.droneId);
+                break;
+            case 4:
+                break;
+        }
+    }
+
     public void refreshMap() {
         printMap();
         for (Drone d: drones) {
@@ -82,22 +102,7 @@ public class Main {
             if (d.currAction.id == 1) {
                 d.setGoTo(d.currAction.destX,d.currAction.destY);
             }
-            switch (dir) {
-                case 0:
-                    setLocation(d.xCoor,d.yCoor-d.maxSpeed, d.droneId);
-                    break;
-                case 1:
-                    setLocation(d.xCoor,d.yCoor+d.maxSpeed, d.droneId);
-                    break;
-                case 2:
-                    setLocation(d.xCoor-d.maxSpeed,d.yCoor, d.droneId);
-                    break;
-                case 3:
-                    setLocation(d.xCoor+d.maxSpeed,d.yCoor, d.droneId);
-                    break;
-                case 4:
-                    break;
-            }
+            updateDir(d,dir);
         }
     }
 
@@ -114,7 +119,7 @@ public class Main {
         m.initMap();
 
         // 2. Add drones to map
-        m.addDrone(new Drone(m.getDroneCount(), 1,"\u001B[36m")); // first-drone is for testing, does not appear
+        m.addDrone(new Drone(m.getDroneCount(), 1,"\u001B[36m")); // ignore "color", relevant only for IntelliJ terminal
         m.addDrone(new Hunter(m.getDroneCount(), 1));
         m.addDrone(new Wolverine(m.getDroneCount(), 1));
 
