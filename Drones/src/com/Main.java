@@ -35,6 +35,20 @@ public class Main {
             }
             System.out.println("");
         }
+        printStatus();
+    }
+
+    public void printStatus() {
+        String s,sub,act,subact;
+        for (int i=1; i<droneNum; i++) {
+            Drone d = drones.get(i);
+            s = d.getClass().toString();
+            sub = s.substring(10,s.length());
+            act = d.currAction.toString();
+            subact = act.substring(4,act.indexOf('@'));
+            System.out.print(d.droneId+". "+sub+": ("+d.xCoor+","+d.yCoor+") Action: "+subact+"\t\t\t");
+        }
+        System.out.println("");
     }
 
     public void addDrone(Drone d) {
@@ -64,33 +78,21 @@ public class Main {
             if (d.currAction.id == 1) {
                 d.setGoTo(d.currAction.destX,d.currAction.destY);
             }
-            if (dir == 0) { // Advance drone - Up
-                if (d.yCoor < 0)
-                    System.out.println("drone "+d.droneId+" has exited the boundaries.");
-                else
+            switch (dir) {
+                case 0:
                     setLocation(d.xCoor,d.yCoor-d.maxSpeed, d.droneId);
-            }
-            else if (dir == 1) { // Advance drone - Down
-                if (d.yCoor > 99)
-                    System.out.println("drone "+d.droneId+" has exited the boundaries.");
-                else
+                    break;
+                case 1:
                     setLocation(d.xCoor,d.yCoor+d.maxSpeed, d.droneId);
-            }
-            else if (dir == 2) { // Advance drone - Left
-                if (d.xCoor < 0)
-                    System.out.println("drone "+d.droneId+" has exited the boundaries.");
-                else
+                    break;
+                case 2:
                     setLocation(d.xCoor-d.maxSpeed,d.yCoor, d.droneId);
-            }
-            else if (dir == 3) { // Advance drone - Right
-                if (d.xCoor > 99)
-                    System.out.println("drone "+d.droneId+" has exited the boundaries.");
-                else
+                    break;
+                case 3:
                     setLocation(d.xCoor+d.maxSpeed,d.yCoor, d.droneId);
-            }
-            else if (dir == 4){} // do nothing - drone is in Stop mode
-            else {
-                System.out.println("ERROR: no such direction");
+                    break;
+                case 4:
+                    break;
             }
         }
     }
@@ -120,6 +122,7 @@ public class Main {
 //        m.setLocation(15,97,8);
 //        m.setLocation(17,97,9);
 
-        m.drones.get(3).setAction(new GoTo(0,99));
+        m.drones.get(3).setAction(new GoTo(18,99));
+        m.drones.get(1).setAction(new GoTo(0,99));
     }
 }
